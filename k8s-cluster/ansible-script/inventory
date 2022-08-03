@@ -1,0 +1,8 @@
+# This is inventory file defined master and workers nodes
+
+[master]
+master ansible_host=192.168.56.3 ansible_user=root ansible_connection=ssh ansible_password=********
+
+[workers]
+worker1 ansible_host=192.168.56.4 ansible_user=root ansible_connection=ssh ansible_password=*******
+worker2 ansible_host=192.168.56.5 ansible_user=root ansible_connection=ssh ansible_password=*******
