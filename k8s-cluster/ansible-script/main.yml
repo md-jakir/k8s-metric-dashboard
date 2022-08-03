@@ -1,0 +1,7 @@
+# This file is for listing multiple ansible playbook yaml file that sould be excuted by ansible squencely.
+# And it must be arranged by squence as per requirement
+
+---
+- import_playbook: playbooks/common.yml
+- import_playbook: playbooks/master_node.yml
+- import_playbook: playbooks/joining_worker.yml
