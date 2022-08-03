@@ -1,0 +1,30 @@
+---
+- name: Joining worker nodes in cluster 
+  hosts: workers
+  gather_facts: no
+  tasks:
+# Copying token from master to worker node
+  - name: Copying token from master to worker1 node
+    copy: 
+      src: /tmp/join_token
+      dest: /tmp/join_token
+      mode: 0777
+    when: inventory_hostname == "worker1"
+
+  - name: Copy join command file from master to worker2 node
+    copy: 
+      src: /tmp/join_token
+      dest: /tmp/join_token
+      mode: 0777
+    when: inventory_hostname == "worker2"
+
+# Joing worker nodes to cluster 
+  - name: joining worker1 node to cluster
+    command: sh /tmp/join_token
+    register: joined_or_not
+    when: inventory_hostname == "worker1"
+
+  - name: joining workers node to cluster
+    command: sh /tmp/join_token
+    register: joined_or_not
+    when: inventory_hostname == "worker2
