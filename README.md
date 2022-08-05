@@ -10,3 +10,5 @@ $ vagrant init
 
 $ vagrant up
 
+To create cluster here, I use weave CNI pluging for pod network. 
+
