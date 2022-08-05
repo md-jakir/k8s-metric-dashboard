@@ -7,5 +7,6 @@ Here, I have created cluser node individual using vagrant machine and then used 
 To create cluster I've firstly writing vagrant script with specificaton and mention ansible playbook location for master and worker nodes location in vagrant script and used following command. 
 
 $ vagrant init
+
 $ vagrant up
 
