@@ -20,9 +20,16 @@ Note: If metric server isn't running for the certificate issue then need to patc
 $ kubectl patch deployment metrics-server -n kube-system --type 'json' -p '[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
 # K8s-dashboard deployment: 
-Kubernetes dashboard is a web UI for the cluster to see the all workloads running. To deploy dashboard need serviceaccount for dashbaord application as well as admin user as a service account who can login into dashboard and able to see the all namespace workloads running. For cluster admin here, I've created cluster-admin.yml. A nodeport service is creaed for the dashboard so that we can access the dashboard from ouside. To access the dashboard need to get the admin user token. It would be get by the following command.
+Kubernetes dashboard is a web UI for the cluster to see the all workloads running. To deploy dashboard need serviceaccount for dashbaord application as well as admin user as a service account who can login into dashboard and able to see the all namespace workloads running. For cluster admin here, I've created cluster-admin.yml. A nodeport service is creaed for the dashboard so that we can access the dashboard from outside. To access the dashboard need to get the admin user token and it would be get by the following command.
 
 $ kubectl get secret -n kubernetes-dashboard $(kubectl get serviceaccount admin -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+
+Output token: 
+eyJhbGciOiJSUzI1NiIsImtpZCI6Imt4UzV0cjZ3Z19UY0k4YTBSUUEyMUxCR3hMRUpwSF9ndHIweWoyR1BrcEEifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWRhc2hib2FyZC10b2tlbi1mcm1rbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjdjNTMzNmE3LWIzYWEtNDczMy1hODY5LTEzZWZkZTYzMjlmNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlcm5ldGVzLWRhc2hib2FyZDprdWJlcm5ldGVzLWRhc2hib2FyZCJ9.ohn68o1U0rrED4Bdfb9ePVayjcdGpe8ZQqmIux36fVkqRs5Sy3L_SoUMtUHyQwL6ddic2Ubmd4yu768PPFJbatNBjCwu88aM7nkr8B8aETrY1P8we46Gxs4Ptm-qSma1RDz1-trYlU-1JqT2s7IYh6RyVyuOZk-dAdwgo6EhJuLeTU7ERQaXVEwnPjgaLVlJOzVxolquA-AxHO5zjmO-eQYbflLbktFyTZSAhpgD7KAafPnykDNSa-yg2uRZyz3MZApJ1WHUDBD5Hk2kx3zWv62w5hgjEEjZPn8tHCkJ5diBWu866E-fKNZEcE5OtgE3zGW4StiPIzGQJAT17RqIMg
+
+
+
+
 
 
 
