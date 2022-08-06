@@ -4,7 +4,7 @@
 
 # Provisioning VM machine
 Provisioning cluster nodes (VirtualBox VMs) using vagrant and installing Docker and Kubeadm packages in cluster nodes.
-To create cluster I've firstly writing vagrant script with specificaton and mention ansible playbook location for master and worker nodes location in vagrant script and used following command as well as we can use individual vagrant script to create individual clusetr node and then apply ansible script from ansible machine. here I've mentioned both method. The following commands are used to provision VM using vagrant script. 
+To create cluster I've firstly writing vagrant script with specificaton and mention ansible playbook location for master and worker nodes location in vagrant script and used following command as well as we can use individual vagrant script to create individual cluster node and then apply ansible script from ansible machine. here I've mentioned both method. The following commands are used to provision VM using vagrant script. 
 
 $ vagrant init
 
