@@ -19,6 +19,8 @@ Note: If metric server isn't running for the certificate issue then need to patc
 
 $ kubectl patch deployment metrics-server -n kube-system --type 'json' -p '[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
+$kubectl rollout restart deployment metrics-server -n kube-system
+
 # K8s-dashboard deployment: 
 Kubernetes dashboard is a web UI for the cluster to see the all workloads running. To deploy dashboard need serviceaccount for dashbaord application as well as admin user as a service account who can login into dashboard and able to see the all namespace workloads running. For cluster admin here, I've created cluster-admin.yml. A nodeport service is creaed for the dashboard so that we can access the dashboard from outside. To access the dashboard need to get the admin user token and it would be get by the following command.
 
