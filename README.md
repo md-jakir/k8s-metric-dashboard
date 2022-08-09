@@ -33,6 +33,9 @@ eyJhbGciOiJSUzI1NiIsImtpZCI6Imt4UzV0cjZ3Z19UY0k4YTBSUUEyMUxCR3hMRUpwSF9ndHIweWoy
 # K8s DashBoard: 
 ![Screenshot (5)](https://user-images.githubusercontent.com/25055579/183614427-c9a898df-995d-49ab-b4a5-ee76b126aa6d.png)
 
+![image](https://user-images.githubusercontent.com/25055579/183615121-d12fff9f-cbec-4d5c-9b1e-5f9ffff18d62.png)
+
+
 
 
 
