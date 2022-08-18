@@ -1,41 +1,7 @@
 - name: Change hostname for master and workers node 
-  hosts: all
-  #vars_files:
-  #- ./env.yml
+  hosts: k8s-master
   gather_facts: no
   tasks:
-  # - name: changing hostname for master node
-  #   hostname:
-  #     name: k8s-master.example.com
-  #   when: inventory_hostname == "master"
-
-  # - name: changing hostname for worker1 node
-  #   hostname:
-  #     name: k8s-worker1.example.com
-  #   when: inventory_hostname == "worker1"
-
-  #  - name: changing hostname for worker2 node
-  #    hostname:
-  #      name: k8s-worker2.example.com
-  #    when: inventory_hostname == "worker2"
-
-  # - name: Adding maste node in /etc/hosts file 
-  #   lineinfile: 
-  #     dest: /etc/hosts
-  #     line: "{{ master_addr}} k8s-master.example.com k8s-master"
-
-  # - name: Adding worker1 node in /etc/hosts file 
-  #   lineinfile: 
-  #     dest: /etc/hosts
-  #     #line: "192.168.56.126 k8s-worker.example.com k8s-worker"
-  #     line: "{{ worker_addr }} k8s-worker1.example.com k8s-worker1"
-
-  # - name: Adding worker2 node in /etc/hosts file 
-  #   lineinfile: 
-  #     dest: /etc/hosts
-  #     #line: "192.168.56.127 k8s-worker1.example.com k8s-worker1"
-  #     line: "{{ worker_node2 }} k8s-worker2.example.com k8s-worker2"
-
   - name: Disable swam in /etc/fstabe
     shell: sed -i '/swap/s/^/#/g' /etc/fstab && swapoff -a
     become: true
@@ -57,7 +23,6 @@
     yum:
       name: "{{ packages }}"
       state: present
-    #with_items: "{{ pre_packages }}"
     vars: 
       packages:
       - yum-utils
@@ -80,7 +45,6 @@
     yum: 
       name: "{{ packages }}"
       state: present
-    #with_items: "{{ docker_packages }}"
     vars:
       packages:
       - containerd.io
@@ -133,8 +97,6 @@
       name: "{{ packages }}"
       disable_excludes: 'kubernetes'
       state: present
-    #with_items: "{{ kube_packages }}"
-    #become: true
     vars:
       packages: 
       - kubeadm-1.21.13
