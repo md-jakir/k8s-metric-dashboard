@@ -8,11 +8,14 @@ Vagrant.configure("2") do |config|
         v.memory = 2048
         v.cpus = 2
     end
-      
+    
     config.vm.define "k8s-master" do |master|
         master.vm.box = IMAGE_NAME
         master.vm.network "private_network", ip: "192.168.56.10"
-        master.vm.hostname = "k8s-master"
+        master.vm.hostname = "k8s-master.example.com" 
+        master.vm.provision "shell", inline: <<-SHELL
+            echo -e "192.168.56.10 k8s-master k8s-master.example.com \n192.168.56.11 k8s-worker1 k8s-worker1.example.com \n192.168.56.12 k8s-worker2 k8s-worker2.example.com" >> /etc/hosts
+        SHELL
         master.vm.provision "ansible" do |ansible|
             ansible.playbook = "kubernetes-setup/master-playbook.yml"
             ansible.extra_vars = {
@@ -22,10 +25,13 @@ Vagrant.configure("2") do |config|
     end
 
     (1..N).each do |i|
-        config.vm.define "node-#{i}" do |node|
+        config.vm.define "k8s-worker#{i}" do |node|
             node.vm.box = IMAGE_NAME
             node.vm.network "private_network", ip: "192.168.56.#{i + 10}"
-            node.vm.hostname = "node-#{i}"
+            node.vm.hostname = "k8s-worker#{i}.example.com"
+            node.vm.provision "shell", inline: <<-SHELL
+                echo -e "192.168.56.10 k8s-master k8s-master.example.com \n192.168.56.#{i + 10} k8s-worker#{i} k8s-worker#{i}.example.com" >> /etc/hosts
+            SHELL
             node.vm.provision "ansible" do |ansible|
                 ansible.playbook = "kubernetes-setup/node-playbook.yml"
                 ansible.extra_vars = {
