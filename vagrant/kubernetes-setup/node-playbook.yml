@@ -1,7 +1,136 @@
 ---
-- hosts: all
-  become: true
+- hosts: "k8s-worker1, k8s-worker2"
   tasks:
+  - name: Disable swam in /etc/fstabe
+    shell: sed -i '/swap/s/^/#/g' /etc/fstab && swapoff -a 
+    become: true
+
+  - name: Disable SeLinux 
+    shell: sed -i '/SELINUX/s/^/#/g' /etc/selinux/config && echo "SELINUX=disabled" >> /etc/selinux/config && setenforce 0
+    become: true
+
+  - name: Stop and disable firewalld serivces 
+    shell: systemctl stop firewalld && systemctl disable firewalld
+    become: true
+
+  - name: load br_netfilter module
+    shell: modprobe br_netfilter
+    become: true
+
+  - name: Installing dependency packages in master and workers node
+    yum:
+      name: "{{ packages }}"
+      state: present
+    #with_items: "{{ pre_packages }}"
+    vars: 
+      packages:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    become: true
+
+  - name: Add docker repo into yum repository
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docer-ce.repo
+    become: true
+
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: present
+    become: true
+      
+  - name: Installing docker in master and workers node
+    yum: 
+      name: "{{ packages }}"
+      state: present
+    #with_items: "{{ docker_packages }}"
+    vars:
+      packages:
+      - containerd.io
+      - docker-ce
+      - docker-ce-cli
+    become: true
+      
+  - name: creating daemon.json file 
+    shell: 
+      cmd: |
+        mkdir /etc/docker
+        cat > /etc/docker/daemon.json << EOF 
+        {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2",
+        "storage-opts": [
+          "overlay2.override_kernel_check=true"
+        ]
+        }
+        EOF
+    become: true
+      
+  - name: Creating systemd file start and enable docker daemon 
+    shell: 
+      cmd: |
+        mkdir -p /etc/systemd/system/docker.service.d
+        cat > /etc/systemd/system/docker.service.d/docker.conf << EOF
+        [Service]
+        ExecStart=
+        ExecStart=/usr/bin/dockerd
+        EOF
+        systemctl daemon-reload
+        systemctl start docker
+        systemctl enable docker
+    become: true
+
+  # Installing Kubernetes components in master and workers node
+  - name: Adding Kubernetes repo 
+    shell: 
+      cmd: | 
+        cat > /etc/yum.repos.d/kubernetes.repo << EOF 
+        [kubernetes]
+        name=Kubernetes
+        baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        enabled=1
+        gpgcheck=0
+        repo_gpgcheck=0
+        gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        EOF
+    become: true
+      
+  - name: Installing Kubeadm, kubeclt and kubelet
+    yum:
+      name: "{{ packages }}"
+      disable_excludes: 'kubernetes'
+      state: present
+    #with_items: "{{ kube_packages }}"
+    #become: true
+    vars:
+      packages: 
+      - kubeadm-1.21.13
+      - kubectl-1.21.13
+      - kubelet-1.21.13
+    become: true
+      
+  - name: Enable kubelet
+    shell:
+      cmd: |
+        systemctl enable --now kubelet
+    become: true
+
+  - name: Create kubernetes network file to configure system configuration
+    shell:
+      cmd: |
+        cat > /etc/sysctl.d/k8s.conf << EOF 
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+        EOF
+        sysctl --system
+    become: true
+
   - name: Copy the join command to server location
     copy: src=/tmp/join_command dest=/tmp/join_command mode=0777
     
